@@ -20,7 +20,12 @@
 #ifndef SMF_CONTEXT_H
 #define SMF_CONTEXT_H
 
-#include "smf-config.h"
+//#include "smf-config.h"
+#define HAVE_NETINET_ICMP6_H 1
+#define HAVE_NETINET_IP6_H 1
+#define HAVE_NETINET_IP_H 1
+#define HAVE_NETINET_IP_ICMP_H 1
+#define HAVE_NET_IF_H 1
 
 #include "ogs-gtp.h"
 #include "ogs-diameter-gx.h"
