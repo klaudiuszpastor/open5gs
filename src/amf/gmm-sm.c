@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "context.h"
 #include "ngap-handler.h"
 #include "gmm-handler.h"
 #include "gmm-build.h"
@@ -28,6 +29,8 @@
 #include "nudm-handler.h"
 #include "npcf-handler.h"
 #include "namf-handler.h"
+#include "ogs-core.h"
+#include "ogs-ngap.h"
 #include "sbi-path.h"
 #include "amf-sm.h"
 #include "namf-build.h"
@@ -1439,7 +1442,55 @@ static void common_register_state(ogs_fsm_t *s, amf_event_t *e,
             break;
 
         case OGS_NAS_5GS_IDENTITY_RESPONSE:
-              //TODO
+            // Check if NAS message type is validl if not, send error idication 
+            // and transition to exception state
+            if (amf_ue->nas.message_type == 0) {
+                ogs_error("Invalid NAS message type in IDENTITY_RESPONSE");
+                OGS_FSM_TRAN(s, gmm_state_exception);
+                break;
+            }
+
+            // Clear the T3570 timer since identity response has been received
+            CLEAR_AMF_UE_TIMER(amf_ue->t3570);
+            
+            // Handle the identity response
+            gmm_cause = gmm_handle_identity_response(amf_ue, &nas_message->gmm.identity_response);
+
+            // Check if the identity response was accepeted, otherwise reject
+            if (gmm_cause != OGS_5GMM_CAUSE_REQUEST_ACCEPTED) {
+                ogs_error("Identity response not accepted. Sending rejection.");
+                r = nas_5gs_send_gmm_reject(ran_ue, amf_ue, gmm_cause);
+                ogs_expect(r == OGS_OK);
+                ogs_assert(r != OGS_ERROR);
+                OGS_FSM_TRAN(s, gmm_state_exception);
+                break;
+            }
+
+            // Check if SUCI has been set in the amf_ue structure
+            if (!AMF_UE_HAVE_SUCI(amf_ue)) {
+                ogs_error("SUCI not available after IDENTITY_RESPONSE");
+                r = nas_5gs_send_gmm_reject(ran_ue, amf_ue, gmm_cause);
+                ogs_expect(r == OGS_OK);
+                ogs_assert(r != OGS_ERROR);
+                OGS_FSM_TRAN(s, gmm_state_exception);
+                break;
+            }
+
+            // Release all sessions associated with this UE
+            amf_sbi_send_release_all_sessions(ran_ue, amf_ue, AMF_RELEASE_SM_CONTEXT_NO_STATE);
+
+            // Check for session release pending completion, send UE SBI of NAUSF_AUTH type
+            if (!AMF_SESSION_RELEASE_PENDING(amf_ue) && amf_sess_xact_count(amf_ue) == xact_count) {
+                r = amf_ue_sbi_discover_and_send(
+                        OGS_SBI_SERVICE_TYPE_NAUSF_AUTH, NULL,
+                        amf_nausf_auth_build_authenticate,
+                        amf_ue, 0, NULL);
+                ogs_expect(r == OGS_OK);
+                ogs_assert(r != OGS_ERROR);
+            }
+
+            // Transistion to state authentication
+            OGS_FSM_TRAN(s, &gmm_state_authentication);
             break;
 
         case OGS_NAS_5GS_5GMM_STATUS:

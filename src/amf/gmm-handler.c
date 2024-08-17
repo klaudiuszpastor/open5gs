@@ -971,8 +971,69 @@ ogs_nas_5gmm_cause_t gmm_handle_identity_response(amf_ue_t *amf_ue,
     ogs_nas_5gs_mobile_identity_suci_t *mobile_identity_suci = NULL;
     ogs_nas_5gs_mobile_identity_header_t *mobile_identity_header = NULL;
 
-//TODO
+    // Validation of input parameters
+    if (!amf_ue || !identity_response) {
+        ogs_error("Invalid UE or Identiy Response");
+        return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+    }
+    ran_ue = ran_ue_find_by_id(amf_ue->ran_ue_id);
+    if (!ran_ue) {
+        ogs_error("Failed to find RAN UE");
+        return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+    }
+   
+    // Get mobile identity header from the response buffer
+    // Validate the length of the mobile_identity
+    mobile_identity = &identity_response->mobile_identity;
+    if (mobile_identity->buffer == NULL || mobile_identity-> length == 0) {
+        ogs_error("Missing mobile identity header from the response buffer");
+        return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+    }
 
+    if (mobile_identity->length < OGS_NAS_5GS_MOBILE_IDENTITY_SUCI_MIN_SIZE) {
+        ogs_error("The length of Mobile Identity(%d) is less then the min(%d)",
+            mobile_identity->length, OGS_NAS_5GS_MOBILE_IDENTITY_SUCI_MIN_SIZE);
+        return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+    }
+
+    mobile_identity_header = (ogs_nas_5gs_mobile_identity_header_t *)mobile_identity->buffer;
+
+    // Handle SUCI type
+    if (mobile_identity_header->type == OGS_NAS_5GS_MOBILE_IDENTITY_SUCI) {
+        mobile_identity_suci = (ogs_nas_5gs_mobile_identity_suci_t *)mobile_identity->buffer;
+
+        // SUPI format is supported
+        if (mobile_identity_suci->h.supi_format != OGS_NAS_5GS_SUPI_FORMAT_IMSI) {
+            ogs_error("Not implemented SUPI format [%d]", mobile_identity_suci->h.supi_format);
+            return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+        }
+
+        // Validate protection scheme ID
+        if (mobile_identity_suci->protection_scheme_id != OGS_PROTECTION_SCHEME_NULL &&
+            mobile_identity_suci->protection_scheme_id != OGS_PROTECTION_SCHEME_PROFILE_A &&
+            mobile_identity_suci->protection_scheme_id != OGS_PROTECTION_SCHEME_PROFILE_B) {
+            ogs_error("Invalid ProtectionSchemeID(%d) in SUCI", mobile_identity_suci->protection_scheme_id);
+            return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+        }
+
+        // Get PLMN ID from nas_plmn_id
+        ogs_nas_to_plmn_id(&amf_ue->home_plmn_id,&mobile_identity_suci->nas_plmn_id);
+
+        // Reject gmm_cause (by returning) if it is not CAUSE_
+        gmm_cause = gmm_cause_from_access_control(&amf_ue->home_plmn_id);
+        if (gmm_cause != OGS_5GMM_CAUSE_REQUEST_ACCEPTED) {
+            ogs_error("Rejected by PLMN-ID access control");
+            return gmm_cause;
+        }
+
+        // Set SUCI for amf_ue
+        amf_ue_set_suci(amf_ue, mobile_identity);
+        ogs_info("[%s]SUCI identity processed successfully", amf_ue->suci);
+    } else {
+        // Unsupported mobile identity types
+        ogs_error("Unsupported identity type: [%d]", mobile_identity_header->type);
+        return OGS_5GMM_CAUSE_SEMANTICALLY_INCORRECT_MESSAGE;
+    }
     return OGS_5GMM_CAUSE_REQUEST_ACCEPTED;
 }
 
