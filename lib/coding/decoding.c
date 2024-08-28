@@ -1,8 +1,12 @@
 #include "decoding.h"
 #include "encoding.h" 
+#include "metrics.h"
+#include <time.h>
 
 // Function to decode data and verify CRC
 uint32_t decode_with_crc(const uint8_t* input, uint32_t input_size, uint8_t* output, uint32_t* output_size, uint32_t polynomial, uint8_t crc_size) {
+    clock_t start_time = clock();
+
     ogs_assert(input != NULL);
     ogs_assert(output != NULL);
     ogs_assert(output_size != NULL);
@@ -11,6 +15,7 @@ uint32_t decode_with_crc(const uint8_t* input, uint32_t input_size, uint8_t* out
     
     if (input_size <= crc_size / BITS_IN_BYTE) {
         ogs_error("Input size is too small to contain CRC.");
+        increment_decode_failure();
         return OGS_ERROR;
     }
 
@@ -28,11 +33,17 @@ uint32_t decode_with_crc(const uint8_t* input, uint32_t input_size, uint8_t* out
 
     if (calculated_crc != received_crc) {
         ogs_error("CRC mismatch: calculated 0x%08X, received 0x%08X.",calculated_crc, received_crc);
+        increment_decode_failure();
         return OGS_ERROR;
     }
     *output_size = data_size;
 
     ogs_info("CRC decoding successful, output size: %u bytes", *output_size);
+    increment_decode_success();
+
+    clock_t end_time = clock();
+    double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    record_decode_time(elapsed_time);
 
     return OGS_OK; 
 }

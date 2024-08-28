@@ -1,6 +1,7 @@
 coding_sources = files('''
     decoding.c
     encoding.c
+    metrics.c
 '''.split())
 
 coding = library('coding',
