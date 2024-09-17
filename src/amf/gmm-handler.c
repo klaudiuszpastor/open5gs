@@ -960,7 +960,7 @@ int gmm_handle_authentication_response(amf_ue_t *amf_ue,
 
     return OGS_OK;
 }
-
+/*
 ogs_nas_5gmm_cause_t gmm_handle_identity_response(amf_ue_t *amf_ue,
         ogs_nas_5gs_identity_response_t *identity_response)
 {
@@ -975,7 +975,7 @@ ogs_nas_5gmm_cause_t gmm_handle_identity_response(amf_ue_t *amf_ue,
 
     return OGS_5GMM_CAUSE_REQUEST_ACCEPTED;
 }
-
+*/
 ogs_nas_5gmm_cause_t gmm_handle_security_mode_complete(amf_ue_t *amf_ue,
         ogs_nas_5gs_security_mode_complete_t *security_mode_complete)
 {
