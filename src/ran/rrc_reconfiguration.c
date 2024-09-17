@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include "rrc.h"
 #include "ogs-core.h"
-#include "context.h"
 
 void configure_rlc(rlc_config_t *config) {
     if (config->mode == RLC_AM) {

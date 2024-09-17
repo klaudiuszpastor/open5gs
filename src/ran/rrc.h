@@ -1,10 +1,12 @@
 #ifndef __RRC_H
 #define __RRC_H
 
+#include <bits/stdint-uintn.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "ran/context.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -16,20 +18,6 @@ typedef enum {
     RRC_SETUP,
     RRC_SETUP_COMPLETE
 } rrc_message_type_t;
-
-typedef struct {
-    uint8_t mode;  // AM or UM
-    uint8_t sn_field_length;
-    uint8_t t_poll_retransmit;
-    uint8_t t_reassembly;
-    uint8_t t_status_prohibit;
-} rlc_config_t;
-
-typedef struct {
-    uint8_t logical_channel_id;
-    uint8_t priority;
-    uint8_t bucket_size_duration;
-} mac_config_t;
 
 typedef struct {
     uint32_t mmeCode;      
@@ -98,14 +86,14 @@ typedef struct {
 } rrc_setup_complete_t;
 
 //rrc_establishment.c
-void send_message_to_mac(rrc_message_type_t msg_type, void* msg, uint16_t msg_size);
+void send_message_to_mac(rrc_message_type_t msg_type, void *msg, uint16_t msg_size);
 void* receive_message_from_mac(rrc_message_type_t* msg_type);
-void rrc_connection_establishment();
+void rrc_connection_establishment(void);
 
 //rrc_reconfiguration.c
 void configure_rlc(rlc_config_t *config);
 void configure_mac(mac_config_t *config);
-void rrc_reconfiguration(rlc_config_t *rlc_config, mac_config_t *mac_config, int sync_needed);
+void rrc_reconfiguration(rlc_config_t *rlc_config, mac_config_t *mac_config, uint8_t sync_needed);
 
 #ifdef __cplusplus
 }
