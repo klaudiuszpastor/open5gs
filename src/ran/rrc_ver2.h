@@ -20,6 +20,17 @@ typedef enum {
 } rrc_message_type_t;
 
 typedef struct {
+    uint8_t mode;  
+    uint8_t sn_field_length;  
+    bool is_reordering_enabled;  
+    uint16_t max_retx_threshold;  
+    uint8_t poll_pdu;  
+    uint8_t poll_byte;  
+    uint16_t poll_retransmit;  
+} rlc_config_t;
+
+
+typedef struct {
     uint8_t logicalChannelId;
     uint8_t priority;
     uint8_t lcGroup;
@@ -42,9 +53,11 @@ typedef struct {
 } rrc_setup_request_t;
 
 typedef struct {
-    uint8_t ueIdentity;  
+    ue_identity_t ueIdentity;  
     uint8_t capability;  
     uint8_t requestedNSSAI; 
+    uint8_t lastVisitedTAI; 
+    bool isEmergency;
 } nas_registration_request_t;
 
 typedef struct {
@@ -52,7 +65,9 @@ typedef struct {
     uint8_t ueNetworkCapability;  
     uint8_t additionalUpdateType; 
     uint8_t lastVisitedRegisteredTAI; 
-    uint8_t drxParameter;         
+    uint8_t drxParameter; 
+    bool isInitialAttach;
+    uint8_t attachType;        
 } nas_attach_request_t;
 
 typedef struct {
@@ -72,16 +87,18 @@ typedef struct {
     uint8_t protocolDiscriminator;
     uint8_t securityHeaderType;
     uint8_t messageAuthenticationCode;
+    bool integrityProtected;
+    bool ciphered;
     union {
         nas_registration_request_t registrationRequest;
         nas_attach_request_t attachRequest;
         nas_authentication_request_t authRequest;
         nas_security_mode_command_t securityModeCommand;
     };
-} nas_message_t;
+} nas_dedicated_message_t;
 
 typedef struct {
-    nas_message_t NASMessage;  
+    nas_dedicated_message_t NASMessage;  
 } rrc_setup_complete_t;
 
 void handle_rrc_setup_request(rrc_setup_request_t* setup_request);

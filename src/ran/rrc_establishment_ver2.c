@@ -21,13 +21,13 @@ void* receive_message_from_ue(rrc_message_type_t* msg_type) {
         .NASMessage = {
             .messageType = NAS_REGISTRATION_REQUEST,  
             .protocolDiscriminator = 0x07,
-            .messageContent.registrationRequest = {
+            .registrationRequest = {
                 .ueIdentity = 0x44,
                 .capability = 0x22,
                 .requestedNSSAI = 0x10
             }
         }
-    };;
+    };
 
     static uint8_t step = 0;
 
@@ -72,7 +72,7 @@ void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete) {
     // Sprawdzenie, czy wiadomość NAS to Registration Request
     if (setup_complete->NASMessage.messageType == NAS_REGISTRATION_REQUEST) {
         ogs_info("Processing NAS Registration Request within RRC Setup Complete.");
-        nas_registration_request_t *registration_request = &setup_complete->NASMessage.messageContent.registrationRequest;
+        nas_registration_request_t *registration_request = &setup_complete->NASMessage.registrationRequest;
         
         ogs_info("UE Identity: 0x%x", registration_request->ueIdentity);
         ogs_info("UE Capability: 0x%x", registration_request->capability);
@@ -86,6 +86,16 @@ void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete) {
 
 void rrc_dispatch_message(rrc_message_type_t msg_type, void* msg, uint16_t msg_size) {
     ogs_assert(msg != NULL);
+
+    if (msg_size < sizeof(rrc_setup_request_t) && msg_type == RRC_SETUP_REQUEST) {
+        ogs_error("Invalid message size for RRC_SETUP_REQUEST");
+        return;
+    }
+
+    if (msg_size < sizeof(rrc_setup_complete_t) && msg_type == RRC_SETUP_COMPLETE) {
+        ogs_error("Invalid message size for RRC_SETUP_REQUEST");
+        return;
+    }
 
     switch (msg_type) {
         case RRC_SETUP_REQUEST:
@@ -116,18 +126,7 @@ void rrc_connection_establishment() {
 
         received_msg = receive_message_from_ue(&received_msg_type);
         if (received_msg != NULL && received_msg_type == RRC_SETUP_COMPLETE) {
-
             rrc_dispatch_message(received_msg_type, received_msg, sizeof(*received_msg));
-
-            received_msg = receive_message_from_ue(&received_msg_type);
-            
-            if (received_msg != NULL && received_msg_type == NAS_REGISTRATION_REQUEST) {
-
-                rrc_dispatch_message(received_msg_type, received_msg, sizeof(*received_msg));
-            } else {
-                ogs_error("Failed to receive NAS Registration Request from UE");
-            }
-            
         } else {
             ogs_error("Failed to receive RRC Setup Complete from UE");
         }
