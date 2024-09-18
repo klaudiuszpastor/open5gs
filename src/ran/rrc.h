@@ -86,11 +86,11 @@ typedef struct {
 
 typedef struct {
     ue_identity_t ueIdentity;            
-    uint8_t establishmentCause;    //Establishment cause (e.g., emergency, highPriority)     
+    uint8_t establishmentCause;    //Establishment cause (e.g., emergency, highPriority)      
 } rrc_setup_request_t;
 
 typedef struct {
-    rb_config_t radioBearerConfig;  
+    rb_config_t radioBearerConfig; 
 } rrc_setup_t;
 
 typedef struct {
@@ -105,7 +105,7 @@ void rrc_connection_establishment();
 //rrc_reconfiguration.c
 void configure_rlc(rlc_config_t *config);
 void configure_mac(mac_config_t *config);
-void rrc_reconfiguration(rlc_config_t *rlc_config, mac_config_t *mac_config, int sync_needed);
+void rrc_reconfiguration(rlc_config_t *rlc_config, mac_config_t *mac_config, uint8_t sync_needed);
 
 #ifdef __cplusplus
 }

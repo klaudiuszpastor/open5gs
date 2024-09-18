@@ -15,8 +15,7 @@ void* receive_message_from_mac(rrc_message_type_t* msg_type) {
 }
 
 void rrc_connection_establishment() {
-    //Initialize variables
-    uint8_t retries = 0;
+
     bool is_rrc_setup_complete = false;
     rrc_message_type_t received_msg_type;
 
@@ -56,7 +55,7 @@ void rrc_connection_establishment() {
         is_rrc_setup_complete = true;
 
     } else {
-        ogs_info("RRCSetup message not received");
+        ogs_info("RRCSetup message not recognised");
     }
 
     if (is_rrc_setup_complete) {

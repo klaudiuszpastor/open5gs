@@ -26,7 +26,6 @@ void configure_mac(mac_config_t *config) {
     ogs_info("Bucket Size Duration: %d", config->bucket_size_duration);
 }
 
-
 void rrc_reconfiguration(rlc_config_t *rlc_config, mac_config_t *mac_config, uint8_t sync_needed) {
     ogs_debug("Starting RRC Reconfiguration");
 
