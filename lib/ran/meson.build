@@ -1,10 +1,19 @@
-ran_lib_common = files('''
+ran_lib_common_sources = files('''
     context.c
     ogs-ran-common.c
 '''.split())
 
-ran_lib = library('coding',
-    sources : ran_lib_common,
-    c_args : '-DRAN_LIB_COMPILATION',
+#ran_lib_common_inc = include_directories('.')
+
+ran_lib_common = library('ogsran-common',
+    sources : ran_lib_common_sources,
     include_directories : [libcore_inc, libinc],
-    dependencies : [threads, librt, libexecinfo, libsocket, libtalloc_dep, libcore_dep])
+    dependencies : [threads, librt, libexecinfo, libsocket, libtalloc_dep, libcore_dep]
+)
+
+#ran_lib_common_dep = declare_dependency(
+#    link_with : ran_lib_common,
+#    include_directories : [libcore_inc, libinc, ran_lib_common_inc],
+#    dependencies : [threads, librt, libexecinfo, libsocket, libtalloc_dep, libcore_dep, ran_src_dep]
+#)
+

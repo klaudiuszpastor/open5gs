@@ -1,45 +1,63 @@
 #include <stdint.h>
-#include "rrc.h"
+#include "ran/ogs-ran-rrc.h"
 #include "ogs-core.h"
-#include "context.h"
+#include "ran/context.h"
 
+void configure_pdcp(pdcp_config_t *pdcpConfig) {
+    ogs_debug("Configuring PDCP Layer:\n");
 
-void configure_rlc(rlc_config_t *config) {
-    if (config->mode == RLC_AM) {
-        ogs_debug("Configuring AM RLC");
-        //TODO: apply am configurations
-        ogs_info("SN Field Length: %d", config->sn_field_length);
-        ogs_info("Poll Retransmit Timer: %d", config->t_poll_retransmit);
-    } else if (config->mode == RLC_UM) {
-        ogs_debug("Configuring UM RLC");
-        //TODO: apply um configurations
-        ogs_info("SN Field Length: %d", config->sn_field_length);
-    }
-    //TODO: general configuration steps
-    ogs_info("Reassembly Timer: %d", config->t_reassembly);
-    ogs_info("Status Prohibit Timer: %d", config->t_status_prohibit);
+    pdcpConfig->pdcpSNSizeUL = 12;
+    pdcpConfig->pdcpSNSizeDL = 12;
+    pdcpConfig->integrityProtection = 1;
+    pdcpConfig->cipheringAlgorithm = 2;
+    
+    ogs_info("PDCP SN Size UL: %d\n", pdcpConfig->pdcpSNSizeUL);
+    ogs_info("PDCP SN Size DL: %d\n", pdcpConfig->pdcpSNSizeDL);
+    ogs_info("Integrity Protection: %d\n", pdcpConfig->integrityProtection);
+    ogs_info("Ciphering Algorithm: %d\n", pdcpConfig->cipheringAlgorithm);
 }
 
-void configure_mac(mac_config_t *config) {
-    ogs_debug("Configuring MAC Layer");
-    ogs_info("Logical Channel ID: %d", config->logical_channel_id);
-    ogs_info("Priority: %d", config->priority);
-    ogs_info("Bucket Size Duration: %d", config->bucket_size_duration);
+void configure_rlc(rlc_config_t *rlcConfig) {
+    ogs_debug("Configuring RLC Layer:\n");
+
+    rlcConfig->rlcMode = 1;
+    rlcConfig->maxRetx = 4;
+    rlcConfig->snFieldLength = 30;
+    rlcConfig->pollRetransmit = 50;
+    rlcConfig->pollByte = 1;
+    rlcConfig->pollPdu = 2;
+
+    ogs_info("RLC Mode: %d\n", rlcConfig->rlcMode);
+    ogs_info("Max Retransmissions: %d\n", rlcConfig->maxRetx);
+    ogs_info("PollRetransmit: %d\n", rlcConfig->pollRetransmit);
+    ogs_info("pollByte: %d\n", rlcConfig->pollByte);
+    ogs_info("pollPdu: %d\n", rlcConfig->pollPdu);
 }
 
-void rrc_reconfiguration(rlc_config_t *rlc_config, mac_config_t *mac_config, uint8_t sync_needed) {
-    ogs_debug("Starting RRC Reconfiguration");
+void configure_mac(mac_config_t *macConfig) {
+    ogs_debug("Configuring MAC Layer:\n");
+    macConfig->priority = 5;
+    macConfig->lcGroup = 1;
+    macConfig->schedulingRequestConfig = 1;
+    macConfig->logicalChannelId = 1;
+    
+    ogs_info("Logical Channel id: %d\n", macConfig->logicalChannelId);
+    ogs_info("Priority: %d\n", macConfig->priority);
+    ogs_info("Logical Channel Group: %d\n", macConfig->lcGroup);
+    ogs_info("Scheduling Request Config: %d\n", macConfig->schedulingRequestConfig);
+    
+}
 
-    configure_rlc(rlc_config);
+void rrc_reconfiguration(rb_config_t *rbConfig) {
+    rbConfig->rbId = 1;
 
-    configure_mac(mac_config);
-
-    if (sync_needed) {
-        ogs_debug("Reconfiguration with sync");
-        //TODO: sync handling, Random Access Procedure (RA)
-    } else {
-        ogs_debug("Reconfiguration without sync");
-    }
-
-    ogs_info("RRC Reconfiguration Completed.");
-
+    ogs_info("Starting RRC Reconfiguration for RB ID: %d\n", rbConfig->rbId);
+    
+    configure_pdcp(&rbConfig->pdcpConfig);
+    
+    configure_rlc(&rbConfig->rlcConfig);
+    
+    configure_mac(&rbConfig->macConfig);
+    
+    ogs_info("RRC Reconfiguration for RB ID %d completed.\n", rbConfig->rbId);
+}
