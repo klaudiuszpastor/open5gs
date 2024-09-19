@@ -146,6 +146,20 @@ typedef struct {
     };
 } data_flow_t;
 
+typedef struct {
+    uint8_t mode;  // AM or UM
+    uint8_t sn_field_length;
+    uint8_t t_poll_retransmit;
+    uint8_t t_reassembly;
+    uint8_t t_status_prohibit;
+} rlc_config_t;
+
+typedef struct {
+    uint8_t logical_channel_id;
+    uint8_t priority;
+    uint8_t bucket_size_duration;
+} mac_config_t;
+
 void ogs_ran_mac_init(mac_sdu_t *mac_sdu, mac_pdu_t *mac_pdu);
 void ogs_ran_rlc_init(rlc_sdu_t *rlc_sdu, rlc_pdu_t *rlc_pdu);
 void ogs_ran_pdcp_init(pdcp_sdu_t *pdcp_sdu, pdcp_pdu_t *pdcp_pdu);
