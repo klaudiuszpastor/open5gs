@@ -74,11 +74,11 @@ typedef struct {
 
 typedef struct {
     ue_identity_t ueIdentity;            
-    uint8_t establishmentCause;    //Establishment cause (e.g., emergency, highPriority)     
+    uint8_t establishmentCause;    //Establishment cause (e.g., emergency, highPriority)      
 } rrc_setup_request_t;
 
 typedef struct {
-    rb_config_t radioBearerConfig;  
+    rb_config_t radioBearerConfig; 
 } rrc_setup_t;
 
 typedef struct {
