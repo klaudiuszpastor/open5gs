@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 #include <bits/stdint-uintn.h>
-#include "context.h"
-#include "ogs-ran-rrc.h"
+#include "ran/context.h"
+#include "ran/ogs-ran-rrc.h"
 
 // Dedicated NAS message with RRC message
 typedef struct {

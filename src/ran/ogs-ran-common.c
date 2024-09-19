@@ -1,6 +1,6 @@
 #include "ogs-ran-common.h"
 #include "ogs-core.h"
-#include "ogs-ran-rrc.h"
+#include "ran/ogs-ran-rrc.h"
 #include <bits/stdint-uintn.h>
 
 void ogs_ran_send_mac_pdu_to_phy(mac_pdu_t *mac_pdu) {
@@ -72,7 +72,9 @@ void ogs_ran_send_rrc_message_to_mac(ogs_ran_rrc_message_t *rrc_msg) {
     ogs_debug("RRC Message Length: %d", rrc_msg->length);
     ogs_debug("NAS Message Type: %d", rrc_msg->nas_msg.messageType);
 
-    send_message_to_mac(RRC_SETUP_COMPLETE, rrc_msg, rrc_msg->length);
+    rrc_message_type_t msg = RRC_SETUP_COMPLETE;
+    
+    send_message_to_mac(msg,&rrc_msg,rrc_msg->length);
 }
 
 void ogs_ran_receive_rrc_message_from_mac(ogs_ran_rrc_message_t *rrc_msg) {

@@ -61,7 +61,7 @@ typedef struct {
 
 typedef struct {
     ue_identity_t ueIdentity;            
-    uint8_t establishmentCause;  // Establishment cause (e.g., emergency, highPriority)      
+        
 } rrc_setup_request_t;
 
 typedef struct {
@@ -110,6 +110,8 @@ typedef struct {
 } nas_dedicated_message_t;
 
 typedef struct {
+    ue_identity_t ueIdentity; 
+    uint8_t establishmentCause;  // Establishment cause (e.g., emergency, highPriority)  
     nas_dedicated_message_t NASMessage;  
 } rrc_setup_complete_t;
 

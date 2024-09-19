@@ -1,6 +1,5 @@
 ran_lib_common_sources = files('''
     context.c
-    ogs-ran-common.c
 '''.split())
 
 #ran_lib_common_inc = include_directories('.')

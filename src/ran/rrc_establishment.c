@@ -12,30 +12,27 @@ void send_message_to_mac(rrc_message_type_t msg_type, void* msg, uint16_t msg_si
 void* receive_message_from_ue(rrc_message_type_t* msg_type) {
     ogs_info("Receiving message from UE");
 
-    static rrc_setup_request_t received_setup_request = {
-        .ueIdentity = { .mmeCode = 0x1234, .mTmsi = 0x56789 },
-        .establishmentCause = 0x01
-    };
-
-    static rrc_setup_complete_t received_setup_complete = {
-        .NASMessage = {
-            .messageType = NAS_REGISTRATION_REQUEST,  
-            .protocolDiscriminator = 0x07,
-            .registrationRequest = {
-                .ueIdentity = 0x44,
-                .capability = 0x22,
-                .requestedNSSAI = 0x10
-            }
-        }
-    };
-
     static uint8_t step = 0;
 
     if (step == 0) {
+        static rrc_setup_request_t received_setup_request = {
+            .ueIdentity = { .mmeCode = 0x1234, .mTmsi = 0x56789 },
+        };
         *msg_type = RRC_SETUP_REQUEST; 
         step++;
         return &received_setup_request;
     } else if (step == 1) {
+        static rrc_setup_complete_t received_setup_complete = {
+            .NASMessage = {
+                .messageType = NAS_REGISTRATION_REQUEST,  
+                .protocolDiscriminator = 0x07,
+                .registrationRequest = {
+                    .ueIdentity = { .mmeCode = 0x1234, .mTmsi = 0x56789 },
+                    .capability = 0x22,
+                    .requestedNSSAI = 0x10
+                }
+            }
+        };
         *msg_type = RRC_SETUP_COMPLETE;  
         step++;
         return &received_setup_complete;
@@ -49,7 +46,6 @@ void handle_rrc_setup_request(rrc_setup_request_t* setup_request) {
 
     ogs_info("UE Identity: MME Code: 0x%x, M-TMSI: 0x%x", 
               setup_request->ueIdentity.mmeCode, setup_request->ueIdentity.mTmsi);
-    ogs_info("Establishment Cause: 0x%x", setup_request->establishmentCause);
 
     ogs_debug("Preparing RRC Setup response");
     
@@ -64,9 +60,6 @@ void handle_rrc_setup_request(rrc_setup_request_t* setup_request) {
     rrcSetup.radioBearerConfig.pdcpConfig.cipheringAlgorithm = 2;
     rrcSetup.radioBearerConfig.pdcpConfig.integrityProtection = 1;
 
-
-
-
     send_message_to_mac(RRC_SETUP, &rrcSetup, sizeof(rrcSetup));
 }
 
@@ -80,7 +73,7 @@ void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete) {
         ogs_info("Processing NAS Registration Request within RRC Setup Complete.");
         nas_registration_request_t *registration_request = &setup_complete->NASMessage.registrationRequest;
         
-        ogs_info("UE Identity: 0x%x", registration_request->ueIdentity);
+        ogs_info("UE Identity: MME Code: 0x%x, M-TMSI: 0x%x", registration_request->ueIdentity.mmeCode,registration_request->ueIdentity.mTmsi);
         ogs_info("UE Capability: 0x%x", registration_request->capability);
         ogs_info("Requested NSSAI: 0x%x", registration_request->requestedNSSAI);
         
@@ -125,6 +118,8 @@ void rrc_connection_establishment(void) {
     void* received_msg;
 
     received_msg = receive_message_from_ue(&received_msg_type);
+    ogs_info("Waiting for RRC Setup Complete from UE...");
+
     if (received_msg != NULL && received_msg_type == RRC_SETUP_REQUEST) {
         rrc_dispatch_message(received_msg_type, received_msg, sizeof(received_msg));
 

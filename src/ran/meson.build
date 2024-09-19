@@ -2,6 +2,7 @@ ran_src_sources = files('''
     rrc_establishment.c
     rrc_reconfiguration.c
     rach_procedure.c
+    ogs-ran-common.c
 '''.split())
 
 #ran_src_inc = include_directories('.')
