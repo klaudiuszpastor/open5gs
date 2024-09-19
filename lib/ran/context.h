@@ -24,9 +24,9 @@ typedef enum {
 } transport_channel_t;
 
 typedef enum {
-    RLC_MODE_TM, /* Transparent Mode */
-    RLC_MODE_UM, /* Unacknowledged Mode */
-    RLC_MODE_AM  /* Acknowledged Mode */
+    RLC_MODE_TM,
+    RLC_MODE_UM,
+    RLC_MODE_AM 
 } rlc_mode_t;
 
 typedef enum {
@@ -73,18 +73,17 @@ typedef struct {
 typedef struct {
     ogs_ran_header_t h;
     union{
-        uint32_t prb_allocation;    /* Physical Resource Block allocation */
-        uint32_t modulation_scheme; /* Modulation scheme (e.g., QPSK, 16QAM) */
-        uint32_t frequency;         /* Carrier frequency */
-        uint8_t tx_power;           /* Transmission power */
+        uint32_t prb_allocation;   
+        uint32_t modulation_scheme;
+        uint32_t frequency;         
+        uint8_t tx_power;          
         bool is_signal_shaped;
     };
 } phy_entity_t;
 
 typedef struct {
     ogs_ran_header_t h;
-    union 
-    {
+    union {
         uint8_t seq_nr;
         bool is_control_plane;
     };
@@ -92,7 +91,7 @@ typedef struct {
 
 typedef struct {
     ogs_ran_header_t h;
-    {
+    union {
         uint8_t seq_nr;
     };
 } rlc_sdu_t;
@@ -147,21 +146,25 @@ typedef struct {
     };
 } data_flow_t;
 
-/* Function Prototypes */
-void mac_init(mac_sdu_t *mac_sdu, mac_pdu_t *mac_pdu);
-void mac_process(mac_sdu_t *mac_sdu, mac_pdu_t *mac_pdu);
+typedef struct {
+    uint8_t mode;  // AM or UM
+    uint8_t sn_field_length;
+    uint8_t t_poll_retransmit;
+    uint8_t t_reassembly;
+    uint8_t t_status_prohibit;
+} rlc_config_t;
 
-void rlc_init(rlc_sdu_t *rlc_sdu, rlc_pdu_t *rlc_pdu);
-void rlc_process(rlc_sdu_t *rlc_sdu, rlc_pdu_t *rlc_pdu);
+typedef struct {
+    uint8_t logical_channel_id;
+    uint8_t priority;
+    uint8_t bucket_size_duration;
+} mac_config_t;
 
-void pdcp_init(pdcp_sdu_t *pdcp_sdu, pdcp_pdu_t *pdcp_pdu);
-void pdcp_process(pdcp_sdu_t *pdcp_sdu, pdcp_pdu_t *pdcp_pdu);
-
-void sdap_init(sdap_entity_t *sdap_entity);
-void sdap_process(sdap_entity_t *sdap_entity);
-
-void phy_init(phy_entity_t *phy_entity);
-void phy_process(phy_entity_t *phy_entity);
+void ogs_ran_mac_init(mac_sdu_t *mac_sdu, mac_pdu_t *mac_pdu);
+void ogs_ran_rlc_init(rlc_sdu_t *rlc_sdu, rlc_pdu_t *rlc_pdu);
+void ogs_ran_pdcp_init(pdcp_sdu_t *pdcp_sdu, pdcp_pdu_t *pdcp_pdu);
+void ogs_ran_sdap_init(sdap_entity_t *sdap_entity);
+void ogs_ran_phy_init(phy_entity_t *phy_entity);
 
 #ifdef __cplusplus
 }

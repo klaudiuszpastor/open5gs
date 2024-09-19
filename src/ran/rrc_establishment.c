@@ -2,9 +2,8 @@
 #include <stdbool.h>
 #include "rrc.h"
 #include "ogs-core.h"
-#include "context.h"
 
-void send_message_to_mac(rrc_message_type_t msg_type, void* msg, uint16_t msg_size) {
+void send_message_to_mac(rrc_message_type_t msg_type, void *msg, uint16_t msg_size) {
     ogs_assert(msg_type != NULL);
     ogs_info("Sending message type %d to MAC layer", msg_type);
 }
@@ -14,8 +13,7 @@ void* receive_message_from_mac(rrc_message_type_t* msg_type) {
     return NULL;
 }
 
-void rrc_connection_establishment() {
-
+void rrc_connection_establishment(void) {
     bool is_rrc_setup_complete = false;
     rrc_message_type_t received_msg_type;
 

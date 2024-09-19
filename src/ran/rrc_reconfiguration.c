@@ -3,6 +3,7 @@
 #include "ogs-core.h"
 #include "context.h"
 
+
 void configure_rlc(rlc_config_t *config) {
     if (config->mode == RLC_AM) {
         ogs_debug("Configuring AM RLC");
@@ -41,4 +42,4 @@ void rrc_reconfiguration(rlc_config_t *rlc_config, mac_config_t *mac_config, uin
     }
 
     ogs_info("RRC Reconfiguration Completed.");
-}
+
