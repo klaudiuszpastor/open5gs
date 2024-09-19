@@ -20,22 +20,34 @@ typedef enum {
 } rrc_message_type_t;
 
 typedef struct {
-    uint8_t mode;  
-    uint8_t sn_field_length;  
-    bool is_reordering_enabled;  
-    uint16_t max_retx_threshold;  
-    uint8_t poll_pdu;  
-    uint8_t poll_byte;  
-    uint16_t poll_retransmit;  
+    uint8_t rlcMode;  
+    uint8_t snFieldLength;  
+    bool reorderingEnabled;  
+    uint16_t maxRetx;  
+    uint8_t pollPdu;  
+    uint8_t pollByte;  
+    uint16_t pollRetransmit;  
 } rlc_config_t;
 
+typedef struct {
+    uint8_t pdcpSNSizeUL;
+    uint8_t pdcpSNSizeDL;
+    uint8_t integrityProtection;
+    uint8_t cipheringAlgorithm;
+} pdcp_config_t;
 
 typedef struct {
     uint8_t logicalChannelId;
     uint8_t priority;
     uint8_t lcGroup;
-    uint8_t pdcpConfig;    
-    rlc_config_t rlcConfig;     
+    uint8_t schedulingRequestConfig;
+} mac_config_t;
+
+typedef struct {
+    uint8_t rbId;
+    pdcp_config_t pdcpConfig;    
+    rlc_config_t rlcConfig; 
+    mac_config_t macConifg;    
 } rb_config_t;
 
 typedef struct {
@@ -101,6 +113,7 @@ typedef struct {
     nas_dedicated_message_t NASMessage;  
 } rrc_setup_complete_t;
 
+//rrc_establishment.c
 void handle_rrc_setup_request(rrc_setup_request_t* setup_request);
 void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete);
 
@@ -108,6 +121,12 @@ void rrc_dispatch_message(rrc_message_type_t msg_type, void* msg, uint16_t msg_s
 
 void send_message_to_mac(rrc_message_type_t msg_type, void* msg, uint16_t msg_size);
 void* receive_message_from_ue(rrc_message_type_t* msg_type);
+
+//rrc_reconfiguration.c
+void configure_rlc(rlc_config_t *config);
+void configure_mac(mac_config_t *config);
+void configure_pdcp(pdcp_config_t *config);
+void rrc_reconfiguration(rb_config_t *rbConfig);
 
 #ifdef __cplusplus
 }

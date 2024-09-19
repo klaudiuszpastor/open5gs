@@ -26,9 +26,10 @@ typedef struct {
 } rlc_config_t;
 
 typedef struct {
-    uint8_t logical_channel_id;
+    uint8_t logicalChannelId;
     uint8_t priority;
-    uint8_t bucket_size_duration;
+    uint8_t lchGroup;
+    uint8_t bucketSizeDuration;
 } mac_config_t;
 
 typedef struct {
