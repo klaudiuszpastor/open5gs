@@ -7,6 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "context.h"
 
 #define NAS_ATTACH_REQUEST           0x01
 #define NAS_AUTHENTICATION_REQUEST   0x02
@@ -18,42 +19,6 @@ typedef enum {
     RRC_SETUP,
     RRC_SETUP_COMPLETE
 } rrc_message_type_t;
-
-typedef struct {
-    uint8_t rlcMode;  
-    uint8_t snFieldLength;  
-    bool reorderingEnabled;  
-    uint16_t maxRetx;  
-    uint8_t pollPdu;  
-    uint8_t pollByte;  
-    uint16_t pollRetransmit;  
-} rlc_config_t;
-
-typedef struct {
-    uint8_t pdcpSNSizeUL;
-    uint8_t pdcpSNSizeDL;
-    uint8_t integrityProtection;
-    uint8_t cipheringAlgorithm;
-} pdcp_config_t;
-
-typedef struct {
-    uint8_t logicalChannelId;
-    uint8_t priority;
-    uint8_t lcGroup;
-    uint8_t schedulingRequestConfig;
-} mac_config_t;
-
-typedef struct {
-    uint8_t rbId;
-    pdcp_config_t pdcpConfig;    
-    rlc_config_t rlcConfig; 
-    mac_config_t macConfig;    
-} rb_config_t;
-
-typedef struct {
-    uint32_t mmeCode;      
-    uint32_t mTmsi;        
-} ue_identity_t;
 
 typedef struct {
     rb_config_t radioBearerConfig; 
@@ -110,9 +75,11 @@ typedef struct {
 } nas_dedicated_message_t;
 
 typedef struct {
-    ue_identity_t ueIdentity; 
-    uint8_t establishmentCause;  // Establishment cause (e.g., emergency, highPriority)  
-    nas_dedicated_message_t NASMessage;  
+    uint8_t establishmentCause;
+    union {
+        ue_identity_t ueIdentity;   
+        nas_dedicated_message_t NASMessage; 
+    };
 } rrc_setup_complete_t;
 
 //rrc_establishment.c
@@ -120,7 +87,6 @@ void handle_rrc_setup_request(rrc_setup_request_t* setup_request);
 void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete);
 
 void rrc_dispatch_message(rrc_message_type_t msg_type, void* msg, uint16_t msg_size);
-void rrc_connection_establishment(void); 
 void send_message_to_mac(rrc_message_type_t msg_type, void* msg, uint16_t msg_size);
 void* receive_message_from_ue(rrc_message_type_t* msg_type);
 

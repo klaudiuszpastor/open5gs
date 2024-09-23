@@ -32,56 +32,36 @@
 #define DEFAULT_IS_CONTROL_PLANE false
 #define DEFAULT_SEQUENCE_NUMBER 0
 
-void ogs_ran_mac_init(mac_sdu_t *mac_sdu, mac_pdu_t *mac_pdu) {
-    ogs_assert(mac_sdu != NULL && mac_pdu != NULL);
+void ogs_ran_mac_init(mac_entity_t *mac_entity) {
+    ogs_assert(mac_entity != NULL);
 
-    mac_sdu->h.data = (uint8_t *)malloc(MAC_SDU_BUFFER_SIZE);
-    ogs_assert(mac_sdu->h.data != NULL);
-    mac_sdu->h.size = 0;
-    mac_sdu->logical_channel = DEFAULT_LOGICAL_CHANNEL;
-
-    mac_pdu->h.data = (uint8_t *)malloc(MAC_PDU_BUFFER_SIZE);
-    ogs_assert(mac_pdu->h.data != NULL);
-    mac_pdu->h.size = 0;
-    mac_pdu->transport_channel = DEFAULT_TRANSPORT_CHANNEL;
-    mac_pdu->tb_size = 0;
-    mac_pdu->harq_entity.harq_process_id = DEFAULT_HARQ_PROCESS_ID;
-    mac_pdu->harq_entity.is_active = false;
-    mac_pdu->harq_entity.retransmission_count = DEFAULT_RETRANSMISSION_COUNT;
+    mac_entity->macConfig.logicalChannelId = DEFAULT_LOGICAL_CHANNEL;
+    mac_entity->macConfig.transportChannelId = DEFAULT_TRANSPORT_CHANNEL;
+    mac_entity->macConfig.priority = 0;
+    mac_entity->macConfig.lcGroup = 0;
+    mac_entity->macConfig.schedulingRequestConfig = 0;
 }
 
-void ogs_ran_rlc_init(rlc_sdu_t *rlc_sdu, rlc_pdu_t *rlc_pdu) {
-    ogs_assert(rlc_sdu != NULL && rlc_pdu != NULL);
 
-    rlc_sdu->h.data = (uint8_t *)malloc(RLC_SDU_BUFFER_SIZE);
-    ogs_assert(rlc_sdu->h.data != NULL);
-    rlc_sdu->h.size = 0;
-    rlc_sdu->seq_nr = DEFAULT_SEQUENCE_NUMBER;
+void ogs_ran_rlc_init(rlc_entity_t *rlc_entity) {
+    ogs_assert(rlc_entity != NULL);
 
-    rlc_pdu->h.data = (uint8_t *)malloc(RLC_PDU_BUFFER_SIZE);
-    ogs_assert(rlc_pdu->h.data != NULL);
-    rlc_pdu->h.size = 0;
-    rlc_pdu->mode = DEFAULT_RLC_MODE;
-    rlc_pdu->arq_enabled = DEFAULT_ARQ_ENABLED;
-    rlc_pdu->segmentation_enabled = DEFAULT_SEGMENTATION_ENABLED;
-    rlc_pdu->reassembly_enabled = DEFAULT_REASSEMBLY_ENABLED;
+    rlc_entity->rlcConfig.rlcMode = DEFAULT_RLC_MODE;
+    rlc_entity->rlcConfig.snFieldLength = 0;
+    rlc_entity->rlcConfig.reorderingEnabled = true;
+    rlc_entity->rlcConfig.maxRetx = 0;
+    rlc_entity->rlcConfig.pollPdu = 0;
+    rlc_entity->rlcConfig.pollByte = 0;
+    rlc_entity->rlcConfig.pollRetransmit = 0;
 }
 
-void ogs_ran_pdcp_init(pdcp_sdu_t *pdcp_sdu, pdcp_pdu_t *pdcp_pdu) {
-    ogs_assert(pdcp_sdu != NULL && pdcp_pdu != NULL);
+void ogs_ran_pdcp_init(pdcp_entity_t *pdcp_entity) {
+    ogs_assert(pdcp_entity != NULL);
 
-    pdcp_sdu->h.data = (uint8_t *)malloc(PDCP_SDU_BUFFER_SIZE);
-    ogs_assert(pdcp_sdu->h.data != NULL);
-    pdcp_sdu->h.size = 0;
-    pdcp_sdu->seq_nr = DEFAULT_SEQUENCE_NUMBER;
-    pdcp_sdu->is_control_plane = DEFAULT_IS_CONTROL_PLANE;
-
-    pdcp_pdu->h.data = (uint8_t *)malloc(PDCP_PDU_BUFFER_SIZE);
-    ogs_assert(pdcp_pdu->h.data != NULL);
-    pdcp_pdu->h.size = 0;
-    pdcp_pdu->rohc_enabled = DEFAULT_ROHC_ENABLED;
-    pdcp_pdu->ciphering_enabled = DEFAULT_CIPHERING_ENABLED;
-    pdcp_pdu->integrity_protection_enabled = DEFAULT_INTEGRITY_PROTECTION_ENABLED;
+    pdcp_entity->pdcpConfig.pdcpSNSizeUL = 0;
+    pdcp_entity->pdcpConfig.pdcpSNSizeDL = 0;
+    pdcp_entity->pdcpConfig.integrityProtection = DEFAULT_INTEGRITY_PROTECTION_ENABLED;
+    pdcp_entity->pdcpConfig.cipheringAlgorithm = 0;
 }
 
 void ogs_ran_sdap_init(sdap_entity_t *sdap_entity) {
@@ -105,6 +85,3 @@ void ogs_ran_phy_init(phy_entity_t *phy_entity) {
     phy_entity->tx_power = DEFAULT_TX_POWER;
     phy_entity->is_signal_shaped = DEFAULT_SIGNAL_SHAPED;
 }
-
-
-
