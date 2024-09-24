@@ -1,14 +1,14 @@
 #include "ogs-ran-common.h"
 #include "ogs-core.h"
 #include "ran/ogs-ran-rrc.h"
+#include "ran/context.h"
 #include <bits/stdint-uintn.h>
 
-void ogs_ran_send_mac_pdu_to_phy(mac_pdu_t *mac_pdu) {
-    ogs_assert(mac_pdu != NULL);
-    ogs_assert(mac_pdu->h.data != NULL);
+void ogs_ran_send_mac_pdu_to_phy(mac_entity_t *mac_entity) {
+    ogs_assert(mac_entity != NULL);
 
     ogs_debug("Sending MAC PDU to PHY...");
-    ogs_info("PHY: Received MAC PDU. Size: %d, Transport Channel: %d", mac_pdu->tb_size, mac_pdu->transport_channel);
+    ogs_info("PHY: Received MAC PDU. Size: %d, Transport Channel: %d", mac_entity->h.size, mac_entity->macConfig.transportChannelId);
 }
 
 void ogs_ran_send_harq_command_to_phy(harq_entity_t *harq_entity) {
@@ -25,12 +25,11 @@ void ogs_ran_send_scheduling_request(data_flow_t *data_flow) {
     ogs_info("PHY: Processing Scheduling Request for direction %d", data_flow->direction);
 }
 
-void ogs_ran_receive_mac_pdu_from_phy(mac_pdu_t *mac_pdu) {
-    ogs_assert(mac_pdu != NULL); 
-    ogs_assert(mac_pdu->h.data != NULL);  
+void ogs_ran_receive_mac_pdu_from_phy(mac_entity_t *mac_entity) {
+    ogs_assert(mac_entity != NULL);  
 
     ogs_debug("Receiving MAC PDU from PHY...");
-    ogs_info("MAC: Received MAC PDU. Size: %d, Transport Channel: %d", mac_pdu->tb_size, mac_pdu->transport_channel);
+    ogs_info("MAC: Received MAC PDU. Size: %d, Transport Channel: %d", mac_entity->h.size, mac_entity->macConfig.transportChannelId);
 }
 
 void ogs_ran_receive_harq_from_phy(harq_entity_t *harq_entity) {
@@ -89,5 +88,3 @@ void ogs_ran_receive_rrc_message_from_mac(ogs_ran_rrc_message_t *rrc_msg) {
         ogs_info("Processing NAS message of type: %d", nas_msg->messageType);
     }
 }
-
-
