@@ -1,7 +1,5 @@
 #include "ran/ogs-ran-rach.h"
 #include "ogs-core.h"
-#include <string.h>
-#include "ran/ogs-ran-rrc.h"
 
 uint16_t ogs_ran_calculate_ra_rnti(ra_rnti_t *ra_rnti_data) {
     ogs_assert(ra_rnti_data != NULL);

@@ -8,7 +8,6 @@ extern "C" {
 #include <stdio.h>
 #include <bits/stdint-uintn.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 #define UL_GRANT_VALUE 100
 #define TIMING_ADVANCE_VALUE 64
@@ -62,7 +61,6 @@ typedef struct {
 
     uint16_t assigned_c_rnti;
 } rach_procedure_t;
-
 
 uint16_t ogs_ran_calculate_ra_rnti(ra_rnti_t *ra_rnti);
 void ogs_ran_send_ra_rnti(uint16_t ra_rnti); 
