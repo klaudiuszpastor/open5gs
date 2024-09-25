@@ -127,6 +127,7 @@ typedef struct {
 typedef struct {
     ogs_ran_header_t h;
     union{
+        uint16_t id;
         uint32_t prb_allocation;   
         uint32_t modulation_scheme;
         uint32_t frequency;         

@@ -42,7 +42,6 @@ void ogs_ran_mac_init(mac_entity_t *mac_entity) {
     mac_entity->macConfig.schedulingRequestConfig = 0;
 }
 
-
 void ogs_ran_rlc_init(rlc_entity_t *rlc_entity) {
     ogs_assert(rlc_entity != NULL);
 

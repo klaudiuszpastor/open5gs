@@ -1,56 +1,82 @@
-#ifndef __OGS_RAN_RACH_H 
-#define __OGS_RAN_RACH_H
+#ifndef OGS_RAN_RACH_H
+#define OGS_RAN_RACH_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "ogs-core.h"  // Import necessary structures
+#include <stdio.h>
+#include <bits/stdint-uintn.h>
 #include <stdint.h>
-#include <stdbool.h>
+
+#define UL_GRANT_VALUE 100
+#define TIMING_ADVANCE_VALUE 64
+#define RAPID_VALUE 0x1A
+
+#define RA_RNTI_S_ID 3           
+#define RA_RNTI_T_ID 2           
+#define RA_RNTI_F_ID 1           
+#define RA_RNTI_UL_CARRIER_ID 0  
+
+#define TEMP_C_RNTI 54321
+#define C_RNTI 32678
+#define MSG3_DATA_BUFFER 16
+#define CRI_LENGTH 4
+#define ACK 1
+#define NACK 0
 
 typedef struct {
-    uint8_t preamble_format;    
-    uint16_t time_resources;      // Time resources for PRACH transmission
-    uint16_t frequency_resources; // Frequency resources for PRACH transmission
-    uint8_t ra_rnti;              // RNTI
-} prach_config_t;
+    uint8_t s_id;           
+    uint8_t t_id;           
+    uint8_t f_id;           
+    uint8_t ul_carrier_id;  
+} ra_rnti_t;
 
 typedef struct {
-    uint16_t root_sequence_index; 
-    uint16_t cyclic_shift;        
-    uint8_t set_type;             
-} rach_preamble_t;
+    uint8_t rapid;
+    uint16_t tc_rnti;
+    uint16_t ta;
+    uint8_t ul_grant;
+    uint16_t ra_rnti;
+} rar_t;
 
 typedef struct {
-    uint8_t msg1_preamble;       // Random access preamble (Msg1)
-    uint8_t msg2_rar;            // Random Access Response (Msg2) on PDCCH/PDSCH
-    uint8_t msg3_pusch_grant;    // PUSCH grant (Msg3) after Msg2
-    bool contention_resolution;  // Indicates whether contention resolution is needed
-} rach_type_1_proc_t;
+    uint8_t msg3_data[MSG3_DATA_BUFFER];  
+    uint16_t c_rnti;                      // Temporary C-RNTI identifier
+} connection_request_t;
 
 typedef struct {
-    uint8_t msg_a_preamble;       // Random access preamble (MsgA)
-    uint8_t msg_b_rar;            // Random Access Response (MsgB) on PDCCH/PDSCH
-    uint8_t fallback_pusch_grant; // Fallback PUSCH grant after MsgB
-    bool contention_resolution;   
-} rach_type_2_proc_t;
+    uint16_t c_rnti;    // C-RNTI to be assigned
+    uint16_t ta;        
+    uint8_t ul_grant;   
+    uint8_t ack_nack;   
+    uint8_t cri[CRI_LENGTH]; // CRI containing first 32 bits of Msg3
+} contention_resolution_t;
 
 typedef struct {
-    bool is_type_1;              
-    prach_config_t prach_config; 
-    rach_preamble_t preamble;    
-    union {
-        rach_type_1_proc_t type_1_proc; 
-        rach_type_2_proc_t type_2_proc; 
-    };
+    rar_t rar;
+    ra_rnti_t ra_rnti_data;
+    connection_request_t msg3;
+    contention_resolution_t msg4;
+
+    uint16_t assigned_c_rnti;
 } rach_procedure_t;
 
-void ogs_ran_initiate_rach_procedure(rach_procedure_t *rach_proc);
+uint16_t ogs_ran_calculate_ra_rnti(ra_rnti_t *ra_rnti);
+void ogs_ran_send_ra_rnti(uint16_t ra_rnti); 
+void ogs_ran_handle_prach_preamble(uint8_t preamble); 
+void ogs_ran_transmit_msg2_to_phy(rach_procedure_t *rach_proc);
+void ogs_ran_generate_ra_response(rach_procedure_t *rach_proc); 
+
+size_t ogs_ran_receive_msg3_from_phy(rach_procedure_t *rach_proc);
+void ogs_ran_process_msg3_mac(rach_procedure_t *rach_proc); 
+void ogs_ran_send_msg4(rach_procedure_t *rach_proc); 
+void ogs_ran_handle_harq_retransmission(rach_procedure_t *rach_proc); 
+void ogs_ran_process(rach_procedure_t *rach_proc); 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __OGS_RAN_RACH_H */
+#endif /* OGS_RAN_RACH_H */
 
