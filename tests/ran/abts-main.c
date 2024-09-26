@@ -4,12 +4,16 @@
 
 abts_suite *test_ogs_ran_context(abts_suite *suite);
 abts_suite *test_ogs_ran_common(abts_suite *suite);
+abts_suite *test_ogs_ran_rrc_establishment(abts_suite *suite);
+abts_suite *test_ogs_ran_rrc_reconfiguration(abts_suite *suite);
 
 const struct testlist {
     abts_suite *(*func)(abts_suite *suite);
 } alltests[] = {
     {test_ogs_ran_context},  
-    {test_ogs_ran_common},   
+    {test_ogs_ran_common},
+    {test_ogs_ran_rrc_establishment},
+    {test_ogs_ran_rrc_reconfiguration},    
     {NULL}  
 };
 

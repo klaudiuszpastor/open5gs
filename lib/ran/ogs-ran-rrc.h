@@ -17,7 +17,8 @@ extern "C" {
 typedef enum {
     RRC_SETUP_REQUEST,
     RRC_SETUP,
-    RRC_SETUP_COMPLETE
+    RRC_SETUP_COMPLETE,
+    RRC_RECONFIGURATION
 } rrc_message_type_t;
 
 typedef struct {
