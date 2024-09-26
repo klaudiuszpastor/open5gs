@@ -53,38 +53,18 @@ void ogs_ran_receive_ta_command(phy_entity_t *phy_entity) {
     ogs_info("MAC: Timing Advance Command - Frequency: %d", phy_entity->frequency);
 }
 
-void ogs_ran_rrc_encapsulate_nas(ogs_ran_rrc_message_t *rrc_msg, nas_dedicated_message_t *nas_msg) {
-    ogs_assert(rrc_msg != NULL);
-    ogs_assert(nas_msg != NULL);
+void ogs_ran_send_rrc_message_to_mac(rrc_entity_t *rrc_entity) {
+    ogs_assert(rrc_entity != NULL);
 
-    rrc_msg->nas_msg = *nas_msg;
-    rrc_msg->length = sizeof(nas_dedicated_message_t);
-    rrc_msg->rrc_message = (uint8_t*)nas_msg;
+    ogs_info("Sending RRC message to MAC.");
+    ogs_debug("RRC Message Size: %hhu", rrc_entity->size);
 
-    ogs_info("Encapsulated NAS message in RRC message. NAS message length: %d",rrc_msg->length);
+    send_message_to_mac(RRC_SETUP_COMPLETE, rrc_entity->data, rrc_entity->size);
 }
 
-void ogs_ran_send_rrc_message_to_mac(ogs_ran_rrc_message_t *rrc_msg) {
-    ogs_assert(rrc_msg != NULL);
-
-    ogs_info("Sending RRC message with NAS content to MAC.");
-    ogs_debug("RRC Message Length: %d", rrc_msg->length);
-    ogs_debug("NAS Message Type: %d", rrc_msg->nas_msg.messageType);
-
-    rrc_message_type_t msg = RRC_SETUP_COMPLETE;
-    
-    send_message_to_mac(msg,&rrc_msg,rrc_msg->length);
-}
-
-void ogs_ran_receive_rrc_message_from_mac(ogs_ran_rrc_message_t *rrc_msg) {
-    ogs_assert(rrc_msg != NULL);
+void ogs_ran_receive_rrc_message_from_mac(rrc_entity_t *rrc_entity) {
+    ogs_assert(rrc_entity != NULL);
 
     ogs_info("Received RRC message from MAC.");
-    ogs_debug("RRC Message Length: %d", rrc_msg->length);
-    ogs_debug("NAS Message Length: %lu", sizeof(rrc_msg->nas_msg));
-
-    if (rrc_msg->length > 0) {
-        nas_dedicated_message_t *nas_msg = &rrc_msg->nas_msg;
-        ogs_info("Processing NAS message of type: %d", nas_msg->messageType);
-    }
+    ogs_debug("RRC Message Size: %hhu", rrc_entity->size);
 }

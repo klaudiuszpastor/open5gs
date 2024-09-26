@@ -24,7 +24,7 @@ void test_ogs_ran_send_ra_rnti(abts_case *tc, void *data) {
 }
 
 void test_ogs_ran_handle_prach_preamble(abts_case *tc, void *data) {
-    uint8_t preamble = 0xAA;  // Przykładowa wartość preambuły PRACH
+    uint8_t preamble = 0xAA;  
 
     ra_rnti_t expected_ra_rnti_data = {
         .s_id = RA_RNTI_S_ID,
