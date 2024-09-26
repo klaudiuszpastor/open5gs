@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h> 
 #include "ran/ogs-ran-rrc.h"
 #include "ogs-core.h"
 
@@ -52,8 +53,7 @@ void handle_rrc_setup_request(rrc_setup_request_t* setup_request) {
     rrc_setup_t rrcSetup;
     memset(&rrcSetup, 0, sizeof(rrcSetup));
 
-    rrcSetup.radioBearerConfig.macConfig.logicalChannelId = LOGICAL_CHANNEL_BCCH; 
-    rrcSetup.radioBearerConfig.macConfig.transportChannelId = TRANSPORT_CHANNEL_BCH; 
+    rrcSetup.radioBearerConfig.macConfig.logicalChannelId = 3;  
     rrcSetup.radioBearerConfig.macConfig.priority = 1;
     rrcSetup.radioBearerConfig.macConfig.lcGroup = 0;
     rrcSetup.radioBearerConfig.pdcpConfig.pdcpSNSizeDL = 11;
@@ -69,6 +69,7 @@ void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete) {
 
     ogs_info("NAS Message Type: 0x%x", setup_complete->NASMessage.messageType);
     
+    // Sprawdzenie, czy wiadomość NAS to Registration Request
     if (setup_complete->NASMessage.messageType == NAS_REGISTRATION_REQUEST) {
         ogs_info("Processing NAS Registration Request within RRC Setup Complete.");
         nas_registration_request_t *registration_request = &setup_complete->NASMessage.registrationRequest;
@@ -78,8 +79,17 @@ void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete) {
         ogs_info("Requested NSSAI: 0x%x", registration_request->requestedNSSAI);
         
         ogs_info("Registration complete.");
+    // Sprawdzenie, czy wiadomość NAS to Attach Request
+    } else if (setup_complete->NASMessage.messageType == NAS_ATTACH_REQUEST) {
+        ogs_info("Processing NAS Attach Request within RRC Setup Complete.");
+        nas_attach_request_t *attach_request = &setup_complete->NASMessage.attachRequest;
+
+        ogs_info("UE Identity: MME Code: 0x%x, M-TMSI: 0x%x", attach_request->epsMobileIdentity, setup_complete->ueIdentity.mTmsi);
+        ogs_info("UE Network Capability: 0x%x", attach_request->ueNetworkCapability);
+
+        initiate_authentication(setup_complete);
     } else {
-        ogs_info("NAS message is not a Registration Request.");
+        ogs_info("NAS message is not a Registration or Attach Request.");
     }
 }
 

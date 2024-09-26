@@ -3,14 +3,6 @@
 #include "ogs-core.h"
 #include "ran/context.h"
 
-void send_rrc_reconfiguration_message(rrc_reconfiguration_t *rrcConfig) {
-    ogs_debug("Sending RRC Reconfiguration message to UE...");
-    
-    send_message_to_mac(RRC_RECONFIGURATION, rrcConfig, sizeof(*rrcConfig));
-
-    ogs_info("RRC Reconfiguration message sent for RB ID: %d", rrcConfig->rbId);
-}
-
 void configure_pdcp(pdcp_config_t *pdcpConfig) {
     ogs_debug("Configuring PDCP Layer:\n");
 
@@ -66,16 +58,6 @@ void rrc_reconfiguration(rb_config_t *rbConfig) {
     configure_rlc(&rbConfig->rlcConfig);
     
     configure_mac(&rbConfig->macConfig);
-
-    rrc_reconfiguration_t rrcConfig;
-    memset(&rrcConfig, 0, sizeof(rrcConfig));
-    
-    rrcConfig.rbId = rbConfig->rbId;
-    rrcConfig.pdcpConfig = rbConfig->pdcpConfig;
-    rrcConfig.rlcConfig = rbConfig->rlcConfig;
-    rrcConfig.macConfig = rbConfig->macConfig;
-
-    send_rrc_reconfiguration_message(&rrcConfig);
     
     ogs_info("RRC Reconfiguration for RB ID %d completed.\n", rbConfig->rbId);
 }
