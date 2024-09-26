@@ -109,7 +109,7 @@ void configure_pdcp(pdcp_config_t *config);
 void rrc_reconfiguration(rb_config_t *rbConfig);
 void send_rrc_reconfiguration_message(rb_config_t *rrcConfig);
 void receive_registration_accept(registrationAccept_t* registrationAccept, uint32_t, uint32_t);
-void configure_registration_acccept(nas_registration_accept_t *registrationAccept);
+void configure_registration_acccept(nas_registration_accept_t registrationAccept);
 
 #ifdef __cplusplus
 }

@@ -17,13 +17,13 @@ void receive_registration_accept(registrationAccept_t* registrationAccept, uint3
         //something
 }
 
-void configure_registration_acccept(nas_registration_accept_t *registrationAccept){
+void configure_registration_acccept(nas_registration_accept_t registrationAccept){
     ogs_info("Configuring Registration Accept");
-    registrationAccept->regAccept.out_of_scope_1 = 1;
-    registrationAccept->out_of_scope_2 = 2;
+    registrationAccept.regAccept.out_of_scope_1 = 1;
+    registrationAccept.out_of_scope_2 = 2;
 
-    ogs_info("Configured Registration Accept: out_of_scope_1 = %d", registrationAccept->regAccept.out_of_scope_1);
-    ogs_info("Configured Registration Accept: out_of_scope_2 = %d", registrationAccept->out_of_scope_2);
+    ogs_info("Configured Registration Accept: out_of_scope_1 = %d", registrationAccept.regAccept.out_of_scope_1);
+    ogs_info("Configured Registration Accept: out_of_scope_2 = %d", registrationAccept.out_of_scope_2);
 }
 
 void configure_pdcp(pdcp_config_t *pdcpConfig) {
@@ -81,12 +81,10 @@ void rrc_reconfiguration(rb_config_t *rbConfig) {
     configure_rlc(&rbConfig->rlcConfig);
     
     configure_mac(&rbConfig->macConfig);
-    nas_registration_accept_t *registrationAccept;
-
-    //if(registrationAccept != NULL){
-        //configure_registration_acccept(registrationAccept);
-    //}
-        
+    
+    nas_registration_accept_t registrationAccept;
+    memset(&registrationAccept, 0, sizeof(registrationAccept));
+    configure_registration_acccept(registrationAccept);   
 
     rb_config_t rrcConfig;
     memset(&rrcConfig, 0, sizeof(rrcConfig));
