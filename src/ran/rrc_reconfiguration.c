@@ -17,7 +17,7 @@ void receive_registration_accept(registrationAccept_t* registrationAccept, uint3
         //something
 }
 
-void configure_registration_acccept(nas_registration_accept_t registrationAccept){
+void configure_registration_accept(nas_registration_accept_t registrationAccept){
     ogs_info("Configuring Registration Accept");
     registrationAccept.regAccept.out_of_scope_1 = 1;
     registrationAccept.out_of_scope_2 = 2;
@@ -81,10 +81,10 @@ void rrc_reconfiguration(rb_config_t *rbConfig) {
     configure_rlc(&rbConfig->rlcConfig);
     
     configure_mac(&rbConfig->macConfig);
-    
+
     nas_registration_accept_t registrationAccept;
     memset(&registrationAccept, 0, sizeof(registrationAccept));
-    configure_registration_acccept(registrationAccept);   
+    configure_registration_accept(registrationAccept);   
 
     rb_config_t rrcConfig;
     memset(&rrcConfig, 0, sizeof(rrcConfig));

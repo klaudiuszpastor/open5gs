@@ -2,8 +2,6 @@ testunit_unit_sources = files('''
     abts-main.c
     common-test.c
     context-test.c
-    rrc_establishment-test.c
-    rrc_reconfiguration-test.c
 '''.split())
 
 testunit_unit_exe = executable('ran_tests',

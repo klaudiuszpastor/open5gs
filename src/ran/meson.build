@@ -3,6 +3,7 @@ ran_src_sources = files('''
     rrc_reconfiguration.c
     registration_accept.c
     registration_request.c
+    authentication.c
     rach_procedure.c
     ogs-ran-common.c
 '''.split())

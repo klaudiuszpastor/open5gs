@@ -78,8 +78,16 @@ void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete) {
         ogs_info("Requested NSSAI: 0x%x", registration_request->requestedNSSAI);
         
         ogs_info("Registration complete.");
-    } else {
+    } else if (setup_complete->NASMessage.messageType == NAS_ATTACH_REQUEST) {
+        ogs_info("Processing NAS Attach Request within RRC Setup Complete.");
+        nas_attach_request_t *attach_request = &setup_complete->NASMessage.attachRequest;
+        ogs_info("UE Identity: MME Code: 0x%x, M-TMSI: 0x%x", attach_request->epsMobileIdentity, setup_complete->ueIdentity.mTmsi);
+        ogs_info("UE Network Capability: 0x%x", attach_request->ueNetworkCapability);
+        initiate_authentication(setup_complete);
+    }
+    else {
         ogs_info("NAS message is not a Registration Request.");
+        ogs_info("NAS message is not a Registration or Attach Request.");
     }
 }
 
