@@ -13,6 +13,8 @@ extern "C" {
 #define NAS_AUTHENTICATION_REQUEST   0x02
 #define NAS_SECURITY_MODE_COMMAND    0x03
 #define NAS_REGISTRATION_REQUEST     0x04
+//const uint32_t RAN_UE_NGAP_ID = 4294967295;
+//const uint32_t AMF_UE_NGAP_ID = 4294967294;
 
 typedef enum {
     RRC_SETUP_REQUEST,
@@ -60,6 +62,15 @@ typedef struct {
     uint8_t imeisvRequest;               
 } nas_security_mode_command_t;
 
+typedef struct registrationAccept_s{
+    uint8_t out_of_scope_1;
+}registrationAccept_t;
+
+typedef struct nas_registration_accept_s{
+    registrationAccept_t regAccept;
+    uint8_t out_of_scope_2;
+}nas_registration_accept_t;
+
 typedef struct {
     uint8_t messageType;
     uint8_t protocolDiscriminator;
@@ -96,6 +107,9 @@ void configure_rlc(rlc_config_t *config);
 void configure_mac(mac_config_t *config);
 void configure_pdcp(pdcp_config_t *config);
 void rrc_reconfiguration(rb_config_t *rbConfig);
+void send_rrc_reconfiguration_message(rb_config_t *rrcConfig);
+void receive_registration_accept(registrationAccept_t* registrationAccept, uint32_t, uint32_t);
+void configure_registration_acccept(nas_registration_accept_t *registrationAccept);
 
 #ifdef __cplusplus
 }

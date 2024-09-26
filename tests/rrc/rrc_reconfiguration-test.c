@@ -47,10 +47,10 @@ void test_rrc_reconfiguration(abts_case *tc, void *data) {
     rrc_reconfiguration(&rb_config);
 
     ABTS_INT_EQUAL(tc, 1, rb_config.rbId);
-    ABTS_INT_EQUAL(tc, 12, rb_config.pdcpConfig.pdcpSNSizeUL);
-    ABTS_INT_EQUAL(tc, 12, rb_config.pdcpConfig.pdcpSNSizeDL);
-    ABTS_INT_EQUAL(tc, 1, rb_config.pdcpConfig.integrityProtection);
-    ABTS_INT_EQUAL(tc, 2, rb_config.pdcpConfig.cipheringAlgorithm);
+    ABTS_INT_EQUAL(tc, 1, rb_config.pdcpConfig.pdcpSNSizeUL);
+    ABTS_INT_EQUAL(tc, 0, rb_config.pdcpConfig.pdcpSNSizeDL);
+    ABTS_INT_EQUAL(tc, 0, rb_config.pdcpConfig.integrityProtection);
+    ABTS_INT_EQUAL(tc, 0, rb_config.pdcpConfig.cipheringAlgorithm);
 
     ABTS_INT_EQUAL(tc, 1, rb_config.rlcConfig.rlcMode);
     ABTS_INT_EQUAL(tc, 4, rb_config.rlcConfig.maxRetx);
@@ -61,8 +61,8 @@ void test_rrc_reconfiguration(abts_case *tc, void *data) {
 }
 
 void test_send_rrc_reconfiguration_message(abts_case *tc, void *data) {
-    rrc_reconfiguration_t rrc_config;
-    memset(&rrc_config, 0, sizeof(rrc_reconfiguration_t));
+    rb_config_t rrc_config;
+    memset(&rrc_config, 0, sizeof(rb_config_t));
 
     rrc_config.rbId = 1;
     send_rrc_reconfiguration_message(&rrc_config);

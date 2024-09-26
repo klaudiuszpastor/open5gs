@@ -3,6 +3,7 @@
 #include <string.h>
 #include "ran/ogs-ran-rrc.h"
 #include "ogs-core.h"
+#include "registration_request.h"
 
 void send_message_to_mac(rrc_message_type_t msg_type, void* msg, uint16_t msg_size) {
     ogs_assert(msg != NULL);
@@ -66,13 +67,12 @@ void handle_rrc_setup_request(rrc_setup_request_t* setup_request) {
 
 void handle_rrc_setup_complete(rrc_setup_complete_t* setup_complete) {
     ogs_info("Handling RRC Setup Complete");
-
+    uint32_t RAN_UE_NGAP_ID = 434343;
     ogs_info("NAS Message Type: 0x%x", setup_complete->NASMessage.messageType);
-    
     if (setup_complete->NASMessage.messageType == NAS_REGISTRATION_REQUEST) {
         ogs_info("Processing NAS Registration Request within RRC Setup Complete.");
         nas_registration_request_t *registration_request = &setup_complete->NASMessage.registrationRequest;
-        
+        run_NGAP_Initial_UE_Message(registration_request, setup_complete->establishmentCause,RAN_UE_NGAP_ID );
         ogs_info("UE Identity: MME Code: 0x%x, M-TMSI: 0x%x", registration_request->ueIdentity.mmeCode,registration_request->ueIdentity.mTmsi);
         ogs_info("UE Capability: 0x%x", registration_request->capability);
         ogs_info("Requested NSSAI: 0x%x", registration_request->requestedNSSAI);

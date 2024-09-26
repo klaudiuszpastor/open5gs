@@ -11,11 +11,11 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "ran/ogs-ran-rrc.h"
+#include "ogs-core.h"
 
-#include "rrc_establishment.c"
-
-void NGAP_Initial_UE_Message(nas_registration_request_t, uint8_t, uint32_t);
-void run_NGAP_Initial_UE_Message(nas_registration_request_t, uint8_t);
+void NGAP_Initial_UE_Message(nas_registration_request_t*, uint8_t, uint32_t);
+void run_NGAP_Initial_UE_Message(nas_registration_request_t*, uint8_t, uint32_t);
 
 #ifdef __cplusplus
 }
