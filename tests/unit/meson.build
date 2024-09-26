@@ -25,6 +25,7 @@ testunit_unit_sources = files('''
     sbi-message-test.c
     security-test.c
     crash-test.c
+    test_rrc_authentication.c
 '''.split())
 
 testunit_unit_exe = executable('unit',
