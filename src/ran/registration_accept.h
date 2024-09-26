@@ -1,4 +1,4 @@
-#ifndef substitute_gNB_H
+#ifndef registration_accept_h
 
 #ifdef __cplusplus
 
@@ -12,15 +12,10 @@ extern "C" {
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "rrc_establishment.c"
 #include "rrc_reconfiguration.c"
 
-void run_NGAP_Initial_UE_Message(void NGAP_Initial_UE_Message, nas_registration_request_t, uint8_t);
-void NGAP_Initial_UE_Message(registrationRequest, establishmentCause, RAN_UE_NGAP_ID);
-
-void run_Initial_Context_Setup_Request(registrationAccept_t *registrationAccept, uint32_t *AMF_UE_NGAP_ID, uint32_t *RAN_UE_NGAP_ID)
-
-
+void Initial_Context_Setup_Request(registrationAccept_t, uint32_t, uint32_t);
+void run_Initial_Context_Setup_Request(registrationAccept_t, uint32_t, uint32_t);
 
 
 uint32_t RAN_UE_NGAP_ID = 4294967295;
@@ -35,12 +30,11 @@ typedef struct nas_registration_accept_s{
     uint8_t out_of_scope_2;
 }nas_registration_accept_t;
 
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif //substitute_gNB_H
+#endif //registration_accept_h
 
 
 

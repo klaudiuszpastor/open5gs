@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "registration_accept.h"
+#include "registration_request.h"
 #include "ogs-core.h"
-#include "registration_request_accept.h"
-#include "rrc_establishment.c"
 #include "rrc_reconfiguration.c"
 
 

@@ -4,10 +4,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "registration_request.h"
 #include "ogs-core.h"
-#include "registration_request_accept.h"
 #include "rrc_establishment.c"
-#include "rrc_reconfiguration.c"
 
     //from gNB/RRC to AMF(L3) via NGAP_Initial_UE_Message:
 
