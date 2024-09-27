@@ -53,6 +53,7 @@ typedef struct {
 typedef struct {
     uint16_t rand;
     uint16_t autn;
+    uint8_t ngKsi;
 } nas_authentication_request_t;
 
 typedef struct {
@@ -110,6 +111,12 @@ void rrc_reconfiguration(rb_config_t *rbConfig);
 void send_rrc_reconfiguration_message(rb_config_t *rrcConfig);
 void receive_registration_accept(registrationAccept_t* registrationAccept, uint32_t, uint32_t);
 void configure_registration_acccept(nas_registration_accept_t registrationAccept);
+
+//authentication.c
+void initiate_authentication(rrc_setup_complete_t* setup_complete);
+uint16_t RAND_GLOBAL;
+uint16_t AUTN_GLOBAL;
+uint8_t NGKSI_GLOBAL;
 
 #ifdef __cplusplus
 }
